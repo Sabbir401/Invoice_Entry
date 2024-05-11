@@ -20,8 +20,8 @@ php artisan key:generate
 php artisan migrate
 
 ## Step-6: Install VueJs
-npm install, 
+npm install <br> 
 npm install vuex@next
 
-## Step-6: Run npm
-npm run dev
+## Step-6: Run npm & Laravel
+php artisan serve <br>npm run dev
