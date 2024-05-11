@@ -30,17 +30,17 @@ Route::controller(AuthController::class)->group(function(){
     Route::post('register','register');
 });
 
-Route::get('/order/{id?}',[OrderApiController::class, 'showOrder']);
+Route::get('/entry/{id?}',[OrderApiController::class, 'showOrder']);
 
-Route::post('/add-order',[OrderApiController::class, 'addOrder']);
+Route::post('/add-entry',[OrderApiController::class, 'addOrder']);
 
-Route::post('/add-multiple-order',[OrderApiController::class, 'addMultipleOrder']);
+Route::post('/add-multiple-entry',[OrderApiController::class, 'addMultipleOrder']);
 
-Route::put('/update-order/{id}',[OrderApiController::class, 'updateOrder']);
+Route::put('/update-entry/{id}',[OrderApiController::class, 'updateOrder']);
 
-Route::delete('/delete-order/{id}',[OrderApiController::class, 'deleteOrder']);
+Route::delete('/delete-entry/{id}',[OrderApiController::class, 'deleteOrder']);
 
-Route::delete('/delete-order',[OrderApiController::class, 'deleteOrderJson']);
+Route::delete('/delete-entry',[OrderApiController::class, 'deleteOrderJson']);
 
 
 

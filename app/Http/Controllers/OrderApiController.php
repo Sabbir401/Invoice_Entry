@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\order;
@@ -42,10 +41,12 @@ class OrderApiController extends Controller
                 'address' => 'required|string',
                 'zip_code' => 'required|string',
                 'would' => 'required',
+                'items' => 'required',
+                'other' => 'required',
             ];
             $validator = Validator::make($data, $rules);
-            if($validator->fails()){
-                return response()->json($validator->errors(),422);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
             }
 
             $store = new order();
@@ -64,7 +65,7 @@ class OrderApiController extends Controller
             $store->other = json_encode($data['other']);
             $store->save();
 
-            $message = 'Oder Added Succesfully';
+            $message = 'Entry Added Succesfully';
             return response()->json(['message' => $message], 201);
         }
     }
@@ -74,6 +75,23 @@ class OrderApiController extends Controller
     {
         if ($request->ismethod('post')) {
             $order_data = $request->all();
+
+            $rules = [
+                'orders.*.order_date' => 'required|date',
+                'orders.*.delivery_date' => 'required|date',
+                'orders.*.day' => 'required',
+                'orders.*.delivery_number' => 'required',
+                'orders.*.first_name' => 'required|string',
+                'orders.*.last_name' => 'required|string',
+                'orders.*.telephone_number' => 'required|string',
+                'orders.*.address' => 'required|string',
+                'orders.*.zip_code' => 'required|string',
+                'orders.*.would' => 'required',
+            ];
+            $validator = Validator::make($order_data, $rules);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
 
             foreach ($order_data['orders'] as $data) {
                 $store = new order();
@@ -88,11 +106,11 @@ class OrderApiController extends Controller
                 $store->zip_code = $data['zip_code'];
                 $store->would = $data['would'];
                 $store->floor_number = $data['floor_number'];
-                // $store->items = $data['email'];
-                // $store->other = $data['email'];
+                $store->items = json_encode($data['items']);
+                $store->other = json_encode($data['other']);
                 $store->save();
 
-                $message = 'Order Added Succesfully';
+                $message = 'Entry Added Succesfully';
             }
             return response()->json(['message' => $message], 201);
         }
@@ -102,6 +120,25 @@ class OrderApiController extends Controller
     {
         if ($request->ismethod('put')) {
             $data = $request->all();
+
+            $rules = [
+                'order_date' => 'required|date',
+                'delivery_date' => 'required|date',
+                'day' => 'required',
+                'delivery_number' => 'required',
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'telephone_number' => 'required|string',
+                'address' => 'required|string',
+                'zip_code' => 'required|string',
+                'would' => 'required',
+                'items' => 'required',
+                'other' => 'required',
+            ];
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
 
 
             $store = order::findOrFail($id);
@@ -116,11 +153,11 @@ class OrderApiController extends Controller
             $store->zip_code = $data['zip_code'];
             $store->would = $data['would'];
             $store->floor_number = $data['floor_number'];
-            // $store->items = $data['email'];
-            // $store->other = $data['email'];
+            $store->items = json_encode($data['items']);
+            $store->other = json_encode($data['other']);
             $store->save();
 
-            $message = 'Order Updated Succesfully';
+            $message = 'Entry Updated Succesfully';
             return response()->json(['message' => $message], 202);
         }
     }
@@ -128,7 +165,7 @@ class OrderApiController extends Controller
     public function deleteOrder($id = null)
     {
         order::findOrFail($id)->delete();
-        $message = 'Order Deleted Succesfully';
+        $message = 'Entry Deleted Succesfully';
         return response()->json(['message' => $message], 200);
     }
 
@@ -137,7 +174,7 @@ class OrderApiController extends Controller
         if ($request->isMethod('delete')) {
             $data = $request->all();
             order::where('id', $data['id'])->delete();
-            $message = 'Order Deleted Succesfully';
+            $message = 'Entry Deleted Succesfully';
             return response()->json(['message' => $message], 200);
         }
     }

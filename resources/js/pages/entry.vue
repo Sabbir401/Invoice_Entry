@@ -3,11 +3,25 @@ import { ref, watch, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
+const error = ref();
+const orders = ref();
 
 const hours = ref([]);
 for (let i = 0; i < 24; i++) {
     hours.value.push(`${i < 10 ? "0" + i : i}.00h`);
 }
+
+const getData = async () => {
+    try {
+        const response = await axios.get(`/api/entry/${route.params.id}`);
+        orders.value = response.data.order;
+    } catch (err) {
+        error.value = err.message || "Error fetching data";
+    }
+};
+
+
+
 
 const items = ref([
     {
@@ -77,10 +91,34 @@ const form = ref({
     other: other.value,
 });
 
+watch(
+  () => orders.value,
+  (newData) => {
+    if (newData) {
+      form.value.order_date = newData.order_date;
+      form.value.delivery_date = newData.delivery_date;
+      form.value.day = newData.day;
+      form.value.first_name = newData.first_name;
+      form.value.last_name = newData.last_name;
+      form.value.telephone_number = newData.telephone_number;
+      form.value.address = newData.address;
+      form.value.zip_code = newData.zip_code;
+      form.value.would = newData.would;
+      form.value.floor_number = newData.floor_number;
+      form.value.items = newData.items;
+      form.value.other.payment_method = newData.other.payment_method;
+      form.value.other.paid = newData.other.paid;
+      form.value.other.delivery_form = newData.other.delivery_form;
+      form.value.other.delivery_to = newData.other.delivery_to;
+      form.value.other.note = newData.other.note;
+    }
+  }
+);
+
 
 const store = async () => {
     try {
-        const response = await axios.post("/api/add-order", form.value);
+        const response = await axios.post("/api/add-entry", form.value);
         window.location.href = '/'
     } catch (err) {
         console.error("Error submitting form:", err);
@@ -89,9 +127,8 @@ const store = async () => {
 
 const update = async () => {
     try {
-        const response = await axios.get(`/update-order/{id}`, form.value);
-        resetForm();
-        alert("Order Successfully Added");
+        const response = await axios.get(`/update-entry/{id}`, form.value);
+        alert("Order Successfully Updated");
     } catch (err) {
         console.error("Error submitting form:", err);
     }
@@ -105,6 +142,7 @@ const submit = async () => {
     }
 }
 
+onMounted(() => getData());
 </script>
 
 <template>

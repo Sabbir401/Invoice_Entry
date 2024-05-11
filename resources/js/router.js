@@ -8,6 +8,11 @@ const routes = [
     },
     {
         path: '/entry',
+        name: 'Entries',
+        component: () => import('./pages/entry.vue'),
+    },
+    {
+        path: '/entry/:id',
         name: 'Entry',
         component: () => import('./pages/entry.vue'),
     },
@@ -21,6 +26,12 @@ const routes = [
         path: '/register',
         name: 'Register',
         component: () => import('./pages/register.vue'),
+
+    },
+    {
+        path: '/print',
+        name: 'print',
+        component: () => import('./pages/printView.vue'),
 
     },
 ];

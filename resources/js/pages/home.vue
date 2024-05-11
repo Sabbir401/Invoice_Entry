@@ -1,24 +1,50 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import router from "../router";
 const error = ref();
 const orders = ref();
+const perPage = 10;
+let currentPage = ref(1);
+
 
 const getData = async () => {
     try {
-        const response = await axios.get("/api/order");
+        const response = await axios.get("/api/entry");
         orders.value = response.data.orders;
-        console.log(orders);
     } catch (err) {
         error.value = err.message || "Error fetching data";
     }
 };
+
+const totalPages = computed(() => Math.ceil(orders.value.length / perPage));
+
+const paginatedOrders = computed(() => {
+    const start = (currentPage.value - 1) * perPage;
+    const end = start + perPage;
+    return orders.value.slice(start, end);
+});
+
+const nextPage = () => {
+    if (currentPage.value < totalPages.value) {
+        currentPage.value++;
+    }
+};
+
+const previousPage = () => {
+    if (currentPage.value > 1) {
+        currentPage.value--;
+    }
+};
+
 
 onMounted(() => getData());
 </script>
 
 <template>
     <div class="sidebar">
-        <RouterLink to="/entry" class="m-sidebar_new_entry_btn">+ Ajouter</RouterLink>
+        <RouterLink to="/entry" class="m-sidebar_new_entry_btn"
+            >+ Ajouter</RouterLink
+        >
         <RouterLink to="/" class="m-sidebar_link"><p>Entrées</p></RouterLink>
     </div>
     <div class="content">
@@ -78,6 +104,7 @@ onMounted(() => getData());
                                     height="20"
                                     src="../images/edit.svg"
                                     alt=""
+                                    @click="router.push(`/entry/${order.id}`)"
                                 /><img
                                     width="20"
                                     height="20"
@@ -92,14 +119,11 @@ onMounted(() => getData());
                     <p class="m-pagination_text">
                         Affichage de 1 à 10 sur un total de 2949 entrées
                     </p>
-                    <div class="m-pagination_btn-container">
-                        <!----><button
-                            class="m-pagination_btn m-pagination_btn--active"
-                        >
-                            1</button
+                    <div class="m-pagination_btn-container" >
+                        <button class="m-pagination_btn m-pagination_btn--active"
+                        >1</button
                         ><button class="m-pagination_btn">2</button
-                        ><button class="m-pagination_btn">3</button
-                        ><button class="m-pagination_btn">></button>
+                        ><button class="m-pagination_btn" @click="nextPage">></button>
                     </div>
                 </div>
             </div>
@@ -116,10 +140,10 @@ onMounted(() => getData());
     background-color: #fff;
 }
 
-.sidebar .m-sidebar_link{
+.sidebar .m-sidebar_link {
     width: 300px;
     height: 50px;
-    border-radius: 12px; 
+    border-radius: 12px;
 }
 
 .sidebar .router-link-active:not(.m-sidebar__new_entry_btn) {
