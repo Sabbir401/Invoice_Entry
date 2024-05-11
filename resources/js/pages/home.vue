@@ -18,7 +18,8 @@ onMounted(() => getData());
 
 <template>
     <div class="sidebar">
-        <a href="" class="m-sidebar_new_entry_btn">+ Ajouter</a>
+        <RouterLink to="/entry" class="m-sidebar_new_entry_btn">+ Ajouter</RouterLink>
+        <RouterLink to="/" class="m-sidebar_link"><p>Entrées</p></RouterLink>
     </div>
     <div class="content">
         <div class="page">
@@ -51,14 +52,20 @@ onMounted(() => getData());
                         <th>Total HT</th>
                         <th>Action</th>
                     </tr>
-                    <tr class="m-table-single-td" v-for="order in orders" :key="order.id">
+                    <tr
+                        class="m-table-single-td"
+                        v-for="order in orders"
+                        :key="order.id"
+                    >
                         <td class="m-table-flex-box">
-                            {{ order.id}} ({{ order.delivery_number }})
+                            {{ order.id }} ({{ order.delivery_number }})
                         </td>
                         <td>{{ order.first_name }}</td>
-                        <td></td>
-                        <td></td>
-                        <td>€</td>
+                        <td>{{ order.order_date }}</td>
+                        <td>{{ order.delivery_date }}</td>
+                        <td v-for="item in order.items" :key="item.id">
+                            €{{ item.totalHT }}
+                        </td>
                         <td>
                             <div class="m-table-actions">
                                 <img
@@ -80,8 +87,6 @@ onMounted(() => getData());
                             </div>
                         </td>
                     </tr>
-                    
-                    
                 </table>
                 <div class="m-pagination">
                     <p class="m-pagination_text">
@@ -109,6 +114,30 @@ onMounted(() => getData());
     position: fixed;
     border-right: 0.5px solid #c0bbbb;
     background-color: #fff;
+}
+
+.sidebar .m-sidebar_link{
+    width: 300px;
+    height: 50px;
+    border-radius: 12px; 
+}
+
+.sidebar .router-link-active:not(.m-sidebar__new_entry_btn) {
+    border-radius: 0 12px 12px 0;
+    background-color: #ffced8;
+    color: #df3153;
+    border-left: 5px solid #df3153;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
 }
 .m-sidebar_new_entry_btn {
     margin-top: 100px;
@@ -202,7 +231,7 @@ onMounted(() => getData());
     justify-content: flex-end;
     align-items: center;
 }
-.m-filter-container>select {
+.m-filter-container > select {
     width: 200px;
     height: 40px;
     border-radius: 20px;
@@ -214,7 +243,7 @@ onMounted(() => getData());
     color: #333;
     outline: none;
 }
-.m-filter-container>input {
+.m-filter-container > input {
     width: 200px;
     height: 40px;
     border-radius: 20px;
@@ -269,7 +298,7 @@ onMounted(() => getData());
     justify-content: center;
     align-items: center;
 }
-.m-pagination_btn-container>button {
+.m-pagination_btn-container > button {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -278,7 +307,7 @@ onMounted(() => getData());
     margin: 0 5px;
     font-size: 14px;
     color: #333;
-    transition: all .3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     cursor: pointer;
 }
 </style>

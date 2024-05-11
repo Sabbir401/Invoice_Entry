@@ -1,5 +1,8 @@
 <script setup>
 import { ref, watch, onMounted, computed } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const hours = ref([]);
 for (let i = 0; i < 24; i++) {
@@ -75,10 +78,10 @@ const form = ref({
 });
 
 
-const submit = async () => {
+const store = async () => {
     try {
         const response = await axios.post("/api/add-order", form.value);
-        alert("Order Successfully Added");
+        window.location.href = '/'
     } catch (err) {
         console.error("Error submitting form:", err);
     }
@@ -93,6 +96,15 @@ const update = async () => {
         console.error("Error submitting form:", err);
     }
 };
+
+const submit = async () => {
+    if(route.params.id){
+        update();
+    }else{
+        store();
+    }
+}
+
 </script>
 
 <template>
@@ -100,8 +112,8 @@ const update = async () => {
         <div class="m-sidebar__logo">
             <img src="../images/logo.png" alt="" />
         </div>
-        <a href="" class="m-sidebar_new_entry_btn">+ Ajouter</a>
-        <a href="" class="m-sidebar_new_entry_btn">Entry</a>
+        <RouterLink to="/entry" class="m-sidebar_new_entry_btn">+ Ajouter</RouterLink>
+        <RouterLink to="/" class="m-sidebar_link"><p>Entrées</p></RouterLink>
     </div>
     <div class="content">
         <div class="new-entry">
@@ -406,12 +418,30 @@ const update = async () => {
     height: 98px;
     margin-left: 20px;
 }
+
 .sidebar {
     width: 328px;
     height: 100vh;
     position: fixed;
     border-right: 0.5px solid #c0bbbb;
     background-color: #fff;
+}
+
+.sidebar .m-sidebar_link{
+    width: 300px;
+    height: 50px;
+    color: #212020;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
 }
 
 .content {

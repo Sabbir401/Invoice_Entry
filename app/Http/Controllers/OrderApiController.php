@@ -12,10 +12,17 @@ class OrderApiController extends Controller
     {
         if ($id == '') {
             $orders = order::get();
+            foreach ($orders as $order) {
+                $order['items'] = json_decode($order['items']);
+                $order['other'] = json_decode($order['other']);
+            }
             return response()->json(['orders' => $orders], 200);
         } else {
-            $orders = order::find($id);
-            return response()->json(['orders' => $orders], 200);
+            $order = order::find($id);
+            $order['items'] = json_decode($order['items']);
+            $order['other'] = json_decode($order['other']);
+
+            return response()->json(['order' => $order], 200);
         }
     }
 
