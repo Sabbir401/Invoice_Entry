@@ -24,4 +24,5 @@ class order extends Model
         'items',
         'other'
     ];
+
 }

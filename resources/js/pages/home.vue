@@ -3,9 +3,7 @@ import { ref, onMounted, computed } from "vue";
 import router from "../router";
 const error = ref();
 const orders = ref();
-const perPage = 10;
-let currentPage = ref(1);
-
+const showNotification = ref(false);
 
 const getData = async () => {
     try {
@@ -14,6 +12,31 @@ const getData = async () => {
     } catch (err) {
         error.value = err.message || "Error fetching data";
     }
+};
+
+const deleteEntry = async (id) => {
+    const confirmed = window.confirm(
+        "Are you sure you want to delete this entry?"
+    );
+    if (confirmed) {
+        const response = await axios.delete(`/api/delete-entry/${id}`);
+        if (response.data.message) {
+            showNotification = true;
+            setTimeout(() => {
+                showNotification.value = false;
+            }, 3000);
+            getData();
+        }
+    } else {
+        getData();
+    }
+};
+
+const getTotalHT = (order) => {
+    if (order.items.length > 0) {
+        return order.items[order.items.length - 1].totalHT;
+    }
+    return "N/A"; // Return 'N/A' if items array is empty
 };
 
 const totalPages = computed(() => Math.ceil(orders.value.length / perPage));
@@ -36,11 +59,11 @@ const previousPage = () => {
     }
 };
 
-
 onMounted(() => getData());
 </script>
 
 <template>
+    
     <div class="sidebar">
         <RouterLink to="/entry" class="m-sidebar_new_entry_btn"
             >+ Ajouter</RouterLink
@@ -89,9 +112,7 @@ onMounted(() => getData());
                         <td>{{ order.first_name }}</td>
                         <td>{{ order.order_date }}</td>
                         <td>{{ order.delivery_date }}</td>
-                        <td v-for="item in order.items" :key="item.id">
-                            €{{ item.totalHT }}
-                        </td>
+                        <td>€{{ getTotalHT(order) }}</td>
                         <td>
                             <div class="m-table-actions">
                                 <img
@@ -110,6 +131,7 @@ onMounted(() => getData());
                                     height="20"
                                     src="../images/trash-2.svg"
                                     alt=""
+                                    @click="deleteEntry(order.id)"
                                 />
                             </div>
                         </td>
@@ -119,11 +141,15 @@ onMounted(() => getData());
                     <p class="m-pagination_text">
                         Affichage de 1 à 10 sur un total de 2949 entrées
                     </p>
-                    <div class="m-pagination_btn-container" >
-                        <button class="m-pagination_btn m-pagination_btn--active"
-                        >1</button
+                    <div class="m-pagination_btn-container">
+                        <button
+                            class="m-pagination_btn m-pagination_btn--active"
+                        >
+                            1</button
                         ><button class="m-pagination_btn">2</button
-                        ><button class="m-pagination_btn" @click="nextPage">></button>
+                        ><button class="m-pagination_btn" @click="nextPage">
+                            >
+                        </button>
                     </div>
                 </div>
             </div>
@@ -333,5 +359,17 @@ onMounted(() => getData());
     color: #333;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
+}
+
+.notification {
+    background-color: #4caf50; /* Green */
+    color: white;
+    text-align: center;
+    padding: 16px;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
 }
 </style>

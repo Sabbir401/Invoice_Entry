@@ -5,6 +5,7 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 const error = ref();
 const orders = ref();
+const order_id = route.params.id;
 
 const hours = ref([]);
 for (let i = 0; i < 24; i++) {
@@ -21,6 +22,9 @@ const getData = async () => {
 };
 
 
+const totalHT = computed(() => {
+    return items.value.reduce((acc, curr) => acc + curr.total_price, 0);
+});
 
 
 const items = ref([
@@ -30,12 +34,10 @@ const items = ref([
         qty: 0,
         unit_price: 0,
         total_price: 0,
+        totalHT: totalHT,
     },
 ]);
 
-const totalHT = computed(() => {
-    return items.value.reduce((acc, curr) => acc + curr.total_price, 0);
-});
 
 const addQty = (item) => {
     item.qty++;
@@ -76,10 +78,10 @@ const other = ref({
 });
 
 const form = ref({
-    order_date: "",
-    delivery_date: "",
-    day: "",
-    delivery_number: "BD-1692635651325",
+    order_date: new Date().toISOString().substr(0, 10),
+    delivery_date: new Date().toISOString().substr(0, 10),
+    day: new Date().toLocaleString('fr-FR', { weekday: 'long' }),
+    delivery_number: `BD-${new Date().getTime()}`,
     first_name: "",
     last_name: "",
     telephone_number: "",
@@ -127,15 +129,15 @@ const store = async () => {
 
 const update = async () => {
     try {
-        const response = await axios.get(`/update-entry/{id}`, form.value);
-        alert("Order Successfully Updated");
+        const response = await axios.put(`/api/update-entry/${order_id}`, form.value);
+        window.location.href = '/'
     } catch (err) {
         console.error("Error submitting form:", err);
     }
 };
 
 const submit = async () => {
-    if(route.params.id){
+    if(order_id){
         update();
     }else{
         store();
@@ -178,6 +180,7 @@ onMounted(() => getData());
                             type="date"
                             id="delivery_date"
                             v-model="form.delivery_date"
+                            @change="day = new Date(delivery_date).toLocaleString('fr-FR', { weekday: 'long' })"
                         />
                     </div>
                     <div class="input_wrap">
