@@ -21,11 +21,9 @@ const getData = async () => {
     }
 };
 
-
 const totalHT = computed(() => {
     return items.value.reduce((acc, curr) => acc + curr.total_price, 0);
 });
-
 
 const items = ref([
     {
@@ -37,7 +35,6 @@ const items = ref([
         totalHT: totalHT,
     },
 ]);
-
 
 const addQty = (item) => {
     item.qty++;
@@ -80,7 +77,7 @@ const other = ref({
 const form = ref({
     order_date: new Date().toISOString().substr(0, 10),
     delivery_date: new Date().toISOString().substr(0, 10),
-    day: new Date().toLocaleString('fr-FR', { weekday: 'long' }),
+    day: new Date().toLocaleString("fr-FR", { weekday: "long" }),
     delivery_number: `BD-${new Date().getTime()}`,
     first_name: "",
     last_name: "",
@@ -94,34 +91,33 @@ const form = ref({
 });
 
 watch(
-  () => orders.value,
-  (newData) => {
-    if (newData) {
-      form.value.order_date = newData.order_date;
-      form.value.delivery_date = newData.delivery_date;
-      form.value.day = newData.day;
-      form.value.first_name = newData.first_name;
-      form.value.last_name = newData.last_name;
-      form.value.telephone_number = newData.telephone_number;
-      form.value.address = newData.address;
-      form.value.zip_code = newData.zip_code;
-      form.value.would = newData.would;
-      form.value.floor_number = newData.floor_number;
-      form.value.items = newData.items;
-      form.value.other.payment_method = newData.other.payment_method;
-      form.value.other.paid = newData.other.paid;
-      form.value.other.delivery_form = newData.other.delivery_form;
-      form.value.other.delivery_to = newData.other.delivery_to;
-      form.value.other.note = newData.other.note;
+    () => orders.value,
+    (newData) => {
+        if (newData) {
+            form.value.order_date = newData.order_date;
+            form.value.delivery_date = newData.delivery_date;
+            form.value.day = newData.day;
+            form.value.first_name = newData.first_name;
+            form.value.last_name = newData.last_name;
+            form.value.telephone_number = newData.telephone_number;
+            form.value.address = newData.address;
+            form.value.zip_code = newData.zip_code;
+            form.value.would = newData.would;
+            form.value.floor_number = newData.floor_number;
+            form.value.items = newData.items;
+            form.value.other.payment_method = newData.other.payment_method;
+            form.value.other.paid = newData.other.paid;
+            form.value.other.delivery_form = newData.other.delivery_form;
+            form.value.other.delivery_to = newData.other.delivery_to;
+            form.value.other.note = newData.other.note;
+        }
     }
-  }
 );
-
 
 const store = async () => {
     try {
         const response = await axios.post("/api/add-entry", form.value);
-        window.location.href = '/'
+        window.location.href = "/";
     } catch (err) {
         console.error("Error submitting form:", err);
     }
@@ -129,20 +125,23 @@ const store = async () => {
 
 const update = async () => {
     try {
-        const response = await axios.put(`/api/update-entry/${order_id}`, form.value);
-        window.location.href = '/'
+        const response = await axios.put(
+            `/api/update-entry/${order_id}`,
+            form.value
+        );
+        window.location.href = "/";
     } catch (err) {
         console.error("Error submitting form:", err);
     }
 };
 
 const submit = async () => {
-    if(order_id){
+    if (order_id) {
         update();
-    }else{
+    } else {
         store();
     }
-}
+};
 
 onMounted(() => getData());
 </script>
@@ -152,7 +151,9 @@ onMounted(() => getData());
         <div class="m-sidebar__logo">
             <img src="../images/logo.png" alt="" />
         </div>
-        <RouterLink to="/entry" class="m-sidebar_new_entry_btn">+ Ajouter</RouterLink>
+        <RouterLink to="/entry" class="m-sidebar_new_entry_btn"
+            >+ Ajouter</RouterLink
+        >
         <RouterLink to="/" class="m-sidebar_link"><p>Entrées</p></RouterLink>
     </div>
     <div class="content">
@@ -180,7 +181,12 @@ onMounted(() => getData());
                             type="date"
                             id="delivery_date"
                             v-model="form.delivery_date"
-                            @change="day = new Date(delivery_date).toLocaleString('fr-FR', { weekday: 'long' })"
+                            @change="
+                                day = new Date(delivery_date).toLocaleString(
+                                    'fr-FR',
+                                    { weekday: 'long' }
+                                )
+                            "
                         />
                     </div>
                     <div class="input_wrap">
@@ -468,7 +474,7 @@ onMounted(() => getData());
     background-color: #fff;
 }
 
-.sidebar .m-sidebar_link{
+.sidebar .m-sidebar_link {
     width: 300px;
     height: 50px;
     color: #212020;

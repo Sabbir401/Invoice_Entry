@@ -29,7 +29,7 @@ const routes = [
 
     },
     {
-        path: '/print',
+        path: '/print-entry/:id',
         name: 'print',
         component: () => import('./pages/printView.vue'),
 

@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import router from "../router";
 const error = ref();
 const orders = ref();
-const showNotification = ref(false);
+const search = ref();
+
 
 const getData = async () => {
     try {
@@ -14,6 +15,8 @@ const getData = async () => {
     }
 };
 
+
+
 const deleteEntry = async (id) => {
     const confirmed = window.confirm(
         "Are you sure you want to delete this entry?"
@@ -21,10 +24,6 @@ const deleteEntry = async (id) => {
     if (confirmed) {
         const response = await axios.delete(`/api/delete-entry/${id}`);
         if (response.data.message) {
-            showNotification = true;
-            setTimeout(() => {
-                showNotification.value = false;
-            }, 3000);
             getData();
         }
     } else {
@@ -89,7 +88,7 @@ onMounted(() => getData());
                             <option disabled="" value="all">Filter</option>
                             <option value="text">Text</option>
                             <option value="date">Date</option></select
-                        ><input type="search" placeholder="Rechercher" />
+                        ><input type="search" v-model.trim="search" placeholder="Rechercher" />
                     </div>
                 </div>
                 <table style="width: 100%">
@@ -120,6 +119,7 @@ onMounted(() => getData());
                                     height="20"
                                     src="../images/printer.svg"
                                     alt=""
+                                    @click="router.push(`/print-entry/${order.id}`)"
                                 /><img
                                     width="20"
                                     height="20"

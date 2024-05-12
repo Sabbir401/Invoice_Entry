@@ -178,4 +178,10 @@ class OrderApiController extends Controller
             return response()->json(['message' => $message], 200);
         }
     }
+
+    public function printOrder($id = null)
+    {
+        order::findOrFail($id)->get();
+        return response()->json(200);
+    }
 }

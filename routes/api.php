@@ -42,5 +42,7 @@ Route::delete('/delete-entry/{id}',[OrderApiController::class, 'deleteOrder']);
 
 Route::delete('/delete-entry',[OrderApiController::class, 'deleteOrderJson']);
 
+Route::get('/print-entry/{id}',[OrderApiController::class, 'showOrder']);
+
 
 

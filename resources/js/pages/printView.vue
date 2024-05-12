@@ -1,11 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const orders = ref();
 
 const getData = async () => {
     const response = await axios.get(`/api/entry/${route.params.id}`);
     orders.value = response.data.order;
+    console.log(orders.value);
 };
 
 const getDate = (day) => {
@@ -35,13 +39,11 @@ onMounted(() => getData());
 <template>
     <Teleport to="body">
         <div id="printable-area">
-            <h1>BON DE LIVRAISON</h1>
+            <h1>BON DE LIVRAISON {{ orders }}</h1>
             <div class="header">
                 <div class="header-left">
                     <img src="../image/logo-small.png" alt="" />
-
                     <p>
-                        <!-- 86 Bd Félix Faure, 93300 Aubervilliers, France -->
                         86 Boulevard Felix Faure, <br />
                         93300 Aubervilliers, France
                         <br />
@@ -56,33 +58,32 @@ onMounted(() => getData());
                     <h3>Client</h3>
 
                     <p>
-                        <strong>Prénom</strong>: {{ order.first_name }}
+                        <strong>Prénom</strong>: {{ orders.order.first_name }}
                         <br />
-                        <strong>Nom</strong>: {{ order.last_name }}
+                        <strong>Nom</strong>: {{ orders.order.last_name }}
                         <br />
-                        <strong>Tel</strong>: {{ order.telephone_number }}
+                        <strong>Tel</strong>: {{ orders.order.telephone_number }}
                         <br />
-                        <strong>Addresse</strong>: {{ order.address }}
+                        <strong>Addresse</strong>: {{ orders.order.address }}
                         <br />
-                        <strong>Code Postal</strong>: {{ order.zip_code }}
+                        <strong>Code Postal</strong>: {{ orders.order.zip_code }}
                         <br />
-                        <strong>Ville</strong>: {{ order.would }}
+                        <strong>Ville</strong>: {{ orders.order.would }}
                         <br />
-                        <strong>Etage</strong>: {{ order.floor_number }}
+                        <strong>Etage</strong>: {{ orders.order.floor_number }}
                         <br />
                         <strong>L'heure de livraison</strong>:
-                        {{ order?.other?.delivery_time }}
+                        {{ orders.order?.other?.delivery_time }}
                     </p>
                 </div>
             </div>
-
             <div class="sub-header">
                 <div class="sub-header-left">
                     <h4>Date de Commande</h4>
 
                     <p>
                         {{
-                            new Date(order.order_date).toLocaleDateString(
+                            new Date(orders.order_date).toLocaleDateString(
                                 "fr-FR",
                                 {
                                     year: "numeric",
@@ -98,7 +99,7 @@ onMounted(() => getData());
 
                     <p>
                         {{
-                            new Date(order.delivery_date).toLocaleDateString(
+                            new Date(orders.delivery_date).toLocaleDateString(
                                 "fr-FR",
                                 {
                                     year: "numeric",
@@ -107,13 +108,13 @@ onMounted(() => getData());
                                 }
                             )
                         }}
-                        ({{ getDate(order.day) }})
+                        ({{ getDate(orders.day) }})
                     </p>
                 </div>
                 <div class="sub-header-right">
                     <h4>N° de Livraison</h4>
 
-                    <p>{{ order.delivery_number }}</p>
+                    <p>{{ orders.delivery_number }}</p>
                 </div>
             </div>
 
@@ -129,7 +130,7 @@ onMounted(() => getData());
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item, index) in order.items" :key="index">
+                        <tr v-for="(item, index) in orders.items" :key="index">
                             <td>{{ item.reference }}</td>
                             <td>{{ item.designation }}</td>
                             <td>{{ item.qty }}</td>
@@ -138,9 +139,9 @@ onMounted(() => getData());
                         </tr>
                     </tbody>
                     <tfoot>
-                        <tr>
+                        <tr v-for="(item, index) in orders.items" :key="index">
                             <td colspan="4">Total HT</td>
-                            <td>€{{ total }}</td>
+                            <td>€{{ item.totalHT }}</td>
                         </tr>
                     </tfoot>
                 </table>
